@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Email Sender – UI Mockup</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ── Streamlit-style top bar ── */
+    .topbar {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar .logo { font-size: 22px; }
+    .topbar h1 { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+    .topbar .badge {
+      margin-left: auto;
+      background: #e8f4fd;
+      color: #1565c0;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── Main layout ── */
+    .main {
+      display: flex;
+      gap: 24px;
+      width: 100%;
+      max-width: 1100px;
+      padding: 32px 24px;
+    }
+
+    /* ── Compose card ── */
+    .compose-card {
+      flex: 2;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .compose-card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a2e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .compose-card h2 span.icon { font-size: 20px; }
+
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .field-group input,
+    .field-group select,
+    .field-group textarea {
+      border: 1.5px solid #dde3ec;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 15px;
+      color: #1a1a2e;
+      background: #f8f9fb;
+      outline: none;
+      transition: border 0.2s;
+      width: 100%;
+      font-family: inherit;
+    }
+    .field-group input:focus,
+    .field-group select:focus,
+    .field-group textarea:focus {
+      border-color: #4f8ef7;
+      background: #fff;
+    }
+    .field-group textarea { resize: vertical; min-height: 160px; }
+
+    /* inline row */
+    .row { display: flex; gap: 14px; }
+    .row .field-group { flex: 1; }
+
+    /* AI generate row */
+    .ai-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+    }
+    .ai-row .field-group { flex: 1; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-ai {
+      background: linear-gradient(135deg, #7c4dff, #448aff);
+      color: #fff;
+      height: 42px;
+    }
+    .btn-ai:hover { background: linear-gradient(135deg, #6a3de8, #2979ff); }
+
+    .btn-send {
+      background: linear-gradient(135deg, #1976d2, #42a5f5);
+      color: #fff;
+      width: 100%;
+      justify-content: center;
+      padding: 13px;
+      font-size: 16px;
+      border-radius: 10px;
+      margin-top: 4px;
+    }
+    .btn-send:hover { background: linear-gradient(135deg, #1565c0, #1e88e5); }
+
+    .btn-attach {
+      background: #f0f4ff;
+      color: #3d5afe;
+      border: 1.5px dashed #90caf9;
+      width: 100%;
+      justify-content: center;
+      padding: 10px;
+    }
+    .btn-attach:hover { background: #e3eaff; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #eef0f4;
+      margin: 2px 0;
+    }
+
+    /* tone pills */
+    .tone-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill {
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1.5px solid #dde3ec;
+      background: #f8f9fb;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pill.active {
+      background: #e8f0fe;
+      border-color: #4f8ef7;
+      color: #1565c0;
+    }
+    .pill:hover { border-color: #4f8ef7; color: #1565c0; }
+
+    /* ── AI hint banner ── */
+    .ai-hint {
+      background: linear-gradient(135deg, #f3e5ff, #e8f4fd);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #5c35a8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ai-hint strong { color: #4527a0; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .info-card {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      padding: 20px;
+    }
+    .info-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+    .step-num {
+      background: #4f8ef7;
+      color: #fff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step p { font-size: 13px; color: #555; line-height: 1.5; }
+    .step p strong { color: #1a1a2e; }
+
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      display: inline-block; margin-right: 6px;
+    }
+    .dot-green { background: #43a047; }
+    .dot-blue  { background: #4f8ef7; }
+    .status-row { font-size: 13px; color: #555; margin-bottom: 8px; display: flex; align-items: center; }
+
+    /* character counter */
+    .char-count {
+      font-size: 11px;
+      color: #aaa;
+      text-align: right;
+      margin-top: -4px;
+    }
+
+    /* footer */
+    .footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <span class="logo">✉️</span>
+  <h1>AI Email Sender</h1>
+  <span class="badge">✨ Powered by Claude</span>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- Left: Compose Card -->
+  <div class="compose-card">
+    <h2><span class="icon">📝</span> Compose Email</h2>
+
+    <!-- To / CC row -->
+    <div class="row">
+      <div class="field-group">
+        <label>To *</label>
+        <input type="email" placeholder="recipient@example.com" value="john.doe@example.com" />
+      </div>
+      <div class="field-group">
+        <label>CC</label>
+        <input type="email" placeholder="cc@example.com (optional)" />
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- Subject + AI Generate -->
+    <div class="ai-row">
+      <div class="field-group">
+        <label>Subject *</label>
+        <input type="text" placeholder="Enter email subject..." value="Project Update – Q2 Milestone Review" />
+      </div>
+      <button class="btn btn-ai">✨ Generate Body</button>
+    </div>
+
+    <!-- AI Hint -->
+    <div class="ai-hint">
+      ✨ <span><strong>AI Tip:</strong> Enter a subject and click "Generate Body" — Claude will write a professional email for you based on your subject and selected tone.</span>
+    </div>
+
+    <!-- Tone Selector -->
+    <div class="field-group">
+      <label>Tone</label>
+      <div class="tone-pills">
+        <span class="pill active">Formal</span>
+        <span class="pill">Casual</span>
+        <span class="pill">Friendly</span>
+        <span class="pill">Professional</span>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- Body -->
+    <div class="field-group">
+      <label>Body *</label>
+      <textarea placeholder="Your email body will appear here after clicking Generate, or type it manually...">Dear John,
+
+I hope this message finds you well. I wanted to provide you with a brief update regarding our Q2 Milestone Review.
+
+We have successfully completed the initial phase and are on track to meet the upcoming deadlines. I would like to schedule a call to discuss the key findings and next steps.
+
+Please let me know your availability for a meeting this week.
+
+Best regards,
+[Your Name]</textarea>
+      <div class="char-count">487 / 5000 characters</div>
+    </div>
+
+    <!-- Attachment -->
+    <div class="field-group">
+      <label>Attachment (optional)</label>
+      <button class="btn btn-attach">📎 Browse & Attach File</button>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- Send Button -->
+    <button class="btn btn-send">📤 &nbsp; Send Email</button>
+  </div>
+
+  <!-- Right: Sidebar -->
+  <div class="sidebar">
+
+    <!-- How it works -->
+    <div class="info-card">
+      <h3>🚀 How It Works</h3>
+      <div class="step">
+        <div class="step-num">1</div>
+        <p><strong>Fill in recipient</strong> — Enter the To and optional CC email addresses.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <p><strong>Write a subject</strong> — A clear subject helps the AI generate a better email body.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <p><strong>Choose your tone</strong> — Formal, Casual, Friendly, or Professional.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <p><strong>Click Generate</strong> — Claude AI writes the email body for you instantly.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <p><strong>Edit & Send</strong> — Review, tweak if needed, then hit Send!</p>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="info-card">
+      <h3>⚙️ Connection Status</h3>
+      <div class="status-row"><span class="status-dot dot-green"></span> SMTP Server — Connected</div>
+      <div class="status-row"><span class="status-dot dot-blue"></span> Claude AI — Ready</div>
+      <div class="status-row"><span class="status-dot dot-green"></span> Sender: you@gmail.com</div>
+    </div>
+
+    <!-- Quick Tips -->
+    <div class="info-card">
+      <h3>💡 Quick Tips</h3>
+      <p style="font-size:13px; color:#555; line-height:1.7;">
+        • Use a descriptive subject for better AI output<br/>
+        • You can always edit the generated body<br/>
+        • Attachments support PDF, DOCX, PNG, and more<br/>
+        • CC field is optional — leave blank if not needed
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">AI Email Sender — Built with Streamlit &amp; Claude API</div>
+
+</body>
+</html>
