@@ -9,6 +9,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+def _secret(key: str, default: str = "") -> str:
+    """Read from st.secrets (Streamlit Cloud) then .env, then default."""
+    try:
+        return st.secrets.get(key, os.getenv(key, default))
+    except Exception:
+        return os.getenv(key, default)
+
 st.set_page_config(
     page_title="MailAI — Smart Email Composer",
     page_icon="🚀",
@@ -479,7 +486,7 @@ if st.session_state.page == "config":
         """, unsafe_allow_html=True)
 
         api_key = st.text_input("OpenRouter API Key", type="password",
-                                value=os.getenv("OPENROUTER_API_KEY",""),
+                                value=_secret("OPENROUTER_API_KEY"),
                                 placeholder="sk-or-v1-…",
                                 help="Get a free key at openrouter.ai/keys",
                                 key="cfg_api_key")
@@ -533,17 +540,17 @@ if st.session_state.page == "config":
 
         sc1, sc2 = st.columns([3, 1])
         with sc1:
-            smtp_host = st.text_input("SMTP Host", value=os.getenv("SMTP_HOST","smtp.gmail.com"), key="cfg_host")
+            smtp_host = st.text_input("SMTP Host", value=_secret("SMTP_HOST","smtp.gmail.com"), key="cfg_host")
         with sc2:
-            smtp_port = st.number_input("Port", value=int(os.getenv("SMTP_PORT","587")),
+            smtp_port = st.number_input("Port", value=int(_secret("SMTP_PORT","587")),
                                         min_value=1, max_value=65535, step=1, key="cfg_port")
         su1, su2 = st.columns(2)
         with su1:
-            smtp_user = st.text_input("Your Email", value=os.getenv("SMTP_USER",""),
+            smtp_user = st.text_input("Your Email", value=_secret("SMTP_USER",""),
                                       placeholder="you@gmail.com", key="cfg_user")
         with su2:
             smtp_pass = st.text_input("App Password", type="password",
-                                      value=os.getenv("SMTP_PASS",""),
+                                      value=_secret("SMTP_PASS",""),
                                       placeholder="xxxx xxxx xxxx xxxx", key="cfg_pass")
 
         st.markdown("""
