@@ -1,3 +1,15 @@
+---
+title: MailAI Smart Email Composer
+emoji: 🚀
+colorFrom: teal
+colorTo: blue
+sdk: streamlit
+sdk_version: 1.35.0
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # 🚀 MailAI — Smart Email Composer
 
 > An AI-powered email composer built with **Streamlit** that drafts, personalizes, and sends emails using **200+ AI models** via OpenRouter — all from a beautiful, animated web UI.
