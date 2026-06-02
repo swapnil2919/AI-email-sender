@@ -1,7 +1,7 @@
 ---
 title: MailAI Smart Email Composer
 emoji: 🚀
-colorFrom: teal
+colorFrom: green
 colorTo: blue
 sdk: streamlit
 sdk_version: 1.35.0
